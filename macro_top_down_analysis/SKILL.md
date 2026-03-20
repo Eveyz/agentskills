@@ -1,4 +1,9 @@
-# macro_top_down_analysis
+---
+name: macro_top_down_analysis
+description: Use this skill when the user wants a current top-down macro view, regime classification, historical analog analysis, or actionable cross-asset allocation implications grounded in recent macro data.
+---
+
+# Macro Top Down Analysis
 
 Use this skill when the user wants a current top-down macro view, regime classification, historical analog analysis, or actionable cross-asset allocation implications grounded in recent macro data.
 
