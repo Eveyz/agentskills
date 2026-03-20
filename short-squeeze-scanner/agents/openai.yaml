@@ -1,0 +1,4 @@
+interface:
+  display_name: "Short Squeeze Scanner"
+  short_description: "Find likely short-squeeze trade setups."
+  default_prompt: "Use $short-squeeze-scanner to identify potential short squeeze candidates and return strict JSON with catalysts, confidence, and trade setup."

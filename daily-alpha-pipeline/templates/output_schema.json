@@ -1,0 +1,27 @@
+{
+  "macro_regime": "unknown",
+  "top_longs": [
+    {
+      "ticker": "unknown",
+      "reason": "unknown",
+      "entry": "unknown",
+      "confidence": "unknown"
+    }
+  ],
+  "top_shorts": [
+    {
+      "ticker": "unknown",
+      "reason": "unknown",
+      "entry": "unknown",
+      "confidence": "unknown"
+    }
+  ],
+  "hedge": {
+    "type": "unknown",
+    "target_exposure": "unknown",
+    "rationale": "unknown"
+  },
+  "risk_flags": [],
+  "weekly_focus": "unknown",
+  "sources": []
+}

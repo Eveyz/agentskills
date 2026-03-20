@@ -1,0 +1,4 @@
+interface:
+  display_name: "Portfolio Hedging"
+  short_description: "Design practical portfolio hedges with ratios, costs, and triggers."
+  default_prompt: "Use $portfolio-hedging to design hedging strategies for my portfolio exposure and return strict JSON."

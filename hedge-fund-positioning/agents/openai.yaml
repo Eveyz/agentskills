@@ -1,0 +1,3 @@
+display_name: Hedge Fund Positioning
+short_description: Track major hedge fund 13F moves.
+default_prompt: Use $hedge-fund-positioning to analyze the latest hedge fund 13F filings and return strict JSON with fund activity, sector trends, crowded trades, and sources.

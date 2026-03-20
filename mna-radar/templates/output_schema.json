@@ -1,0 +1,20 @@
+{
+  "targets": [
+    {
+      "ticker": "string",
+      "potential_buyer": "string",
+      "premium_estimate": "string",
+      "thesis": "string",
+      "regulatory_risk": "low|moderate|high|unknown"
+    }
+  ],
+  "confidence_score": 0,
+  "sources": [
+    {
+      "title": "string",
+      "url": "string",
+      "publisher": "string",
+      "date": "YYYY-MM-DD|unknown"
+    }
+  ]
+}

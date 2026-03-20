@@ -1,0 +1,3 @@
+display_name: Sentiment Vs Fundamental
+short_description: Find stocks where bearish sentiment diverges from solid fundamentals.
+default_prompt: Find contrarian stock ideas where recent sentiment is negative but revenue growth, margins, or valuation remain supportive, and return strict JSON with entry signals.

@@ -1,0 +1,64 @@
+{
+  "fund_activity": [
+    {
+      "fund_name": "string",
+      "reporting_period": "YYYY-Q#|unknown",
+      "comparison_period": "YYYY-Q#|unknown",
+      "new_positions": [
+        {
+          "ticker": "string",
+          "company_name": "string",
+          "sector": "string",
+          "notes": "string"
+        }
+      ],
+      "increased_positions": [
+        {
+          "ticker": "string",
+          "company_name": "string",
+          "sector": "string",
+          "notes": "string"
+        }
+      ],
+      "exited_positions": [
+        {
+          "ticker": "string",
+          "company_name": "string",
+          "sector": "string",
+          "notes": "string"
+        }
+      ],
+      "summary": "string"
+    }
+  ],
+  "sector_trends": [
+    {
+      "sector": "string",
+      "trend": "net_buying|net_selling|mixed|unknown",
+      "evidence": "string",
+      "funds": [
+        "string"
+      ]
+    }
+  ],
+  "crowded_trades": [
+    {
+      "ticker": "string",
+      "company_name": "string",
+      "sector": "string",
+      "funds": [
+        "string"
+      ],
+      "crowding_signal": "new_buying_cluster|increase_cluster|widely_held|unknown",
+      "notes": "string"
+    }
+  ],
+  "sources": [
+    {
+      "title": "string",
+      "url": "string",
+      "publisher": "string",
+      "date": "YYYY-MM-DD|unknown"
+    }
+  ]
+}

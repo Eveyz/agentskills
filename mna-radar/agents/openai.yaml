@@ -1,0 +1,4 @@
+interface:
+  display_name: "M&A Radar"
+  short_description: "Find likely M&A targets from market and activist signals."
+  default_prompt: "Use $mna-radar to identify public companies with elevated M&A probability and return strict JSON with targets, buyers, premium estimates, regulatory risk, confidence, and sources."

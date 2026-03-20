@@ -1,0 +1,37 @@
+{
+  "anomalies": [
+    {
+      "name": "stocks_gold_rising_together",
+      "status": "present|absent|unknown",
+      "recent_window": "unknown",
+      "observation": "unknown",
+      "historical_comparison": "unknown",
+      "confidence": 0
+    }
+  ],
+  "interpretation": [
+    {
+      "anomaly_name": "stocks_gold_rising_together",
+      "signal": "liquidity_stress",
+      "rationale": "unknown",
+      "confidence": 0
+    }
+  ],
+  "trade_opportunities": [
+    {
+      "type": "mean_reversion",
+      "anomaly_name": "stocks_gold_rising_together",
+      "expression": "unknown",
+      "rationale": "unknown",
+      "risk": "unknown"
+    }
+  ],
+  "sources": [
+    {
+      "title": "unknown",
+      "url": "unknown",
+      "publisher": "unknown",
+      "date": "unknown"
+    }
+  ]
+}

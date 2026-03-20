@@ -1,0 +1,3 @@
+display_name: Insider Buying Detector
+short_description: Find recent high-value insider buys and score their signal strength.
+default_prompt: Detect significant insider buying activity within the last 30 days and return strict JSON with signal strength, pricing, and hypotheses.

@@ -1,0 +1,16 @@
+{
+  "candidates": [
+    {
+      "ticker": "unknown",
+      "short_interest": "unknown",
+      "days_to_cover": "unknown",
+      "catalyst": "unknown",
+      "entry_strategy": "unknown",
+      "failure_risk": "unknown"
+    }
+  ],
+  "confidence_score": 0,
+  "sources": [
+    "unknown"
+  ]
+}

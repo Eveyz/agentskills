@@ -1,0 +1,3 @@
+display_name: Correlation Anomaly
+short_description: Detect unusual cross-asset correlations and suggest normalization trades.
+default_prompt: Detect abnormal asset correlations, compare them with historical patterns, interpret the signal, and return strict JSON with anomalies, interpretations, trade opportunities, and sources.

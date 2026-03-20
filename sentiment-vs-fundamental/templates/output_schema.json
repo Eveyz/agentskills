@@ -1,0 +1,19 @@
+{
+  "ideas": [
+    {
+      "ticker": "unknown",
+      "sentiment_issue": "unknown",
+      "fundamental_strength": "unknown",
+      "entry_signal": "unknown"
+    }
+  ],
+  "confidence_score": 0,
+  "sources": [
+    {
+      "title": "unknown",
+      "url": "unknown",
+      "publisher": "unknown",
+      "date": "unknown"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "macro_state": {
+    "inflation_trend": "unknown",
+    "rate_trend": "unknown",
+    "liquidity_condition": "unknown",
+    "growth_regime": "unknown",
+    "inflation_summary": "unknown",
+    "rates_summary": "unknown",
+    "growth_summary": "unknown",
+    "employment_summary": "unknown"
+  },
+  "historical_analogs": [
+    {
+      "period": "unknown",
+      "match_rationale": "unknown",
+      "asset_performance_summary": {
+        "equities_growth": "unknown",
+        "equities_value": "unknown",
+        "bonds": "unknown",
+        "commodities": "unknown",
+        "usd": "unknown"
+      },
+      "confidence": 0
+    }
+  ],
+  "regime": "unknown",
+  "asset_performance_map": {
+    "equities": {
+      "growth": "unknown",
+      "value": "unknown"
+    },
+    "bonds": "unknown",
+    "commodities": "unknown",
+    "usd": "unknown"
+  },
+  "trade_implications": [
+    {
+      "type": "overweight",
+      "asset_or_sector": "unknown",
+      "rationale": "unknown"
+    }
+  ],
+  "confidence_score": 0,
+  "sources": [
+    {
+      "title": "unknown",
+      "url": "unknown",
+      "publisher": "unknown",
+      "date": "unknown"
+    }
+  ]
+}

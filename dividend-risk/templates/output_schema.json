@@ -1,0 +1,15 @@
+{
+  "risk_stocks": [
+    {
+      "ticker": "string",
+      "yield": "string",
+      "risk_factors": "string",
+      "cut_probability": "low | medium | high | very high | unknown",
+      "safer_alternative": "string"
+    }
+  ],
+  "sources": [
+    "https://example.com/source-1",
+    "https://example.com/source-2"
+  ]
+}

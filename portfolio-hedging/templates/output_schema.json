@@ -1,0 +1,18 @@
+{
+  "hedges": [
+    {
+      "instrument": "unknown",
+      "hedge_ratio": "unknown",
+      "cost": "unknown",
+      "trigger": "unknown"
+    }
+  ],
+  "sources": [
+    {
+      "title": "unknown",
+      "url": "unknown",
+      "publisher": "unknown",
+      "date": "unknown"
+    }
+  ]
+}

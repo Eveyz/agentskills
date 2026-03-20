@@ -1,0 +1,15 @@
+{
+  "signals": [
+    {
+      "ticker": "",
+      "insider_role": "",
+      "buy_amount": "",
+      "buy_price": "",
+      "current_price": "",
+      "signal_strength": "",
+      "hypothesis": ""
+    }
+  ],
+  "confidence_score": 0,
+  "sources": []
+}
