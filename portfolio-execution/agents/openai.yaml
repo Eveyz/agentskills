@@ -1,3 +1,3 @@
 display_name: Portfolio Execution
 short_description: Turn the weekly report and IB holdings into sizing, hedge overlays, and final execution advice.
-default_prompt: Use $portfolio-execution to combine the weekly rebalance report, live IB holdings, and hedge plan into final account-aware execution recommendations.
+default_prompt: Use $portfolio-execution to combine the weekly rebalance report, live IB holdings, and hedge plan into a readable Markdown report plus the matching structured JSON payload.

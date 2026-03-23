@@ -7,6 +7,8 @@ description: Design portfolio hedging strategies for equity or multi-asset expos
 
 Design practical hedging plans for a portfolio and return them as strict JSON.
 
+By default, return both a readable Markdown hedge memo and a machine-readable JSON payload. Return JSON only when the user explicitly asks for JSON only.
+
 ## Required Tools
 
 - `yfinance-market-data`
@@ -38,8 +40,6 @@ If one source is unavailable or incomplete, continue with the remaining sources 
 ## Output Contract
 
 Return strict JSON matching [templates/output_schema.json](templates/output_schema.json).
-
-Return only the JSON object when the user asks for the hedge plan itself.
 
 ## Inputs
 
@@ -137,6 +137,21 @@ Make triggers observable and public. Avoid vague language like `"if sentiment wo
 - If exposure detail is missing, hedge only the risks that can be credibly inferred
 - Never claim a hedge is perfect; basis risk and timing risk always exist
 
+## Markdown Report Contract
+
+When the user does not explicitly request JSON only, also return a Markdown report following [templates/report_template.md](templates/report_template.md).
+
+The Markdown report should include these sections:
+
+- Hedge Summary
+- Risks Being Hedged
+- Recommended Instruments
+- Cost And Carry
+- Trigger Conditions
+- Residual Risks
+
+Keep the Markdown concise and implementation-focused.
+
 ## Default Operating Prompt
 
 1. Read `portfolio_exposure` and identify sector concentration, broad beta risk, and macro sensitivity.
@@ -144,5 +159,4 @@ Make triggers observable and public. Avoid vague language like `"if sentiment wo
 3. Estimate a reasonable hedge ratio for each idea.
 4. Estimate the cost using current public information, clearly labeling assumptions.
 5. Add a concrete trigger for when each hedge should be used.
-6. Return strict JSON only.
-
+6. Return a Markdown hedge memo plus the matching structured JSON payload.

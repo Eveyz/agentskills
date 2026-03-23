@@ -7,6 +7,8 @@ description: Produce a weekly rebalance report by summarizing the latest macro, 
 
 Run this skill after the top-down, idea, risk, and hedge layers have produced updated views. Turn those outputs into a compact weekly report that can be compared against the current IB portfolio before final execution advice is generated.
 
+By default, return both a readable Markdown report and a machine-readable JSON payload. Return JSON only when the user explicitly asks for JSON only.
+
 ## Supporting Skills
 
 Use these underlying skills when available:
@@ -97,7 +99,22 @@ The handoff should make it obvious:
 - what should be smaller or zero
 - how the hedge posture should look over the next week
 
-## Preferred Output Shape
+## Markdown Report Contract
+
+When the user does not explicitly request JSON only, also return a Markdown report following [templates/report_template.md](templates/report_template.md).
+
+The Markdown report should include these sections:
+
+- Weekly Summary
+- What Changed
+- Rebalance Priorities
+- Hedge Posture
+- Weekly Risks
+- Monitoring Focus
+
+Keep the Markdown concise and decision-oriented.
+
+## JSON Output Shape
 
 Use this shape when the user wants a structured answer:
 
@@ -126,9 +143,17 @@ Use this shape when the user wants a structured answer:
 }
 ```
 
+## Quality Checklist
+
+Before finalizing:
+
+- Confirm the report reflects the latest top-down, idea, risk, and hedge conclusions.
+- Confirm both Markdown and JSON were produced unless the user explicitly asked for a single format.
+- Confirm the JSON is valid when JSON is requested.
+
 ## Default Operating Prompt
 
 1. Gather the latest top-down, idea, risk, and hedge conclusions.
 2. Write a weekly rebalance report focused on what changed and what matters next.
 3. Produce explicit rebalance priorities and monitoring focus for the coming week.
-4. Hand the report off in a form that `portfolio-execution` can compare against current IB positions.
+4. Return a Markdown report plus the matching structured JSON payload that can be handed to `portfolio-execution`.

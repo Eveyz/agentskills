@@ -7,6 +7,8 @@ description: Convert vetted trade ideas into final account-aware execution advic
 
 Run this skill as the final portfolio layer. Take the surviving ideas, the weekly rebalance report, and the current IB portfolio, then produce final execution advice.
 
+By default, return both a readable Markdown report and a machine-readable JSON payload. Return JSON only when the user explicitly asks for JSON only.
+
 ## Supporting Skills
 
 Use these underlying skills when available:
@@ -138,7 +140,22 @@ Summarize:
 - how the book is hedged
 - what should change versus the current IB holdings
 
-## Preferred Output Shape
+## Markdown Report Contract
+
+When the user does not explicitly request JSON only, also return a Markdown report following [templates/report_template.md](templates/report_template.md).
+
+The Markdown report should include these sections:
+
+- Execution Summary
+- Target Book
+- Current Versus Target
+- Rebalance Plan
+- Hedge Overlay
+- Final Recommendations
+
+Keep the Markdown concise and action-oriented.
+
+## JSON Output Shape
 
 Use this shape when the user wants a structured answer:
 
@@ -187,10 +204,19 @@ Use this shape when the user wants a structured answer:
 }
 ```
 
+## Quality Checklist
+
+Before finalizing:
+
+- Confirm the weekly rebalance report was used before final account-level actions.
+- Confirm current IB holdings were compared against the target book when available.
+- Confirm both Markdown and JSON were produced unless the user explicitly asked for a single format.
+- Confirm the JSON is valid when JSON is requested.
+
 ## Default Operating Prompt
 
 1. Run `weekly-rebalance-report` first to summarize the current weekly target book and priorities.
 2. Take the approved ideas plus the portfolio constraints or live account snapshot.
 3. Size positions based on conviction, catalyst quality, and risk concentration.
 4. Use `portfolio-hedging` to add a hedge overlay that matches the book and the current regime.
-5. Compare the target book with current IB holdings and return final account-aware recommendations.
+5. Compare the target book with current IB holdings and return a Markdown report plus the matching structured JSON payload.

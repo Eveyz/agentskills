@@ -7,7 +7,7 @@ description: Orchestrate the full end-to-end portfolio workflow by combining the
 
 Run this skill as the master end-to-end orchestrator. It should not bypass the upper-layer engines unless one is unavailable. The job of this skill is to sequence the four layers, pass context from one layer to the next, and return one integrated daily portfolio output.
 
-Return only valid JSON when the user asks for the pipeline output itself.
+By default, return both a readable Markdown report and a machine-readable JSON payload. Return JSON only when the user explicitly asks for JSON only.
 
 ## Required Inputs
 
@@ -123,7 +123,22 @@ The final output should make it obvious:
 - how the hedge is structured
 - what the current IB portfolio should change today
 
-## Preferred Output Shape
+## Markdown Report Contract
+
+When the user does not explicitly request JSON only, also return a Markdown report following [templates/report_template.md](templates/report_template.md).
+
+The Markdown report should include these sections:
+
+- Daily Summary
+- Top-Down View
+- Best Ideas
+- Risk Filter Changes
+- Execution Plan
+- Today's IB-Aware Recommendations
+
+Keep the Markdown concise and decision-oriented.
+
+## JSON Output Shape
 
 Use this shape when the user wants a structured answer:
 
@@ -177,7 +192,8 @@ Before finalizing:
 - Confirm the risk filter gated what reached execution.
 - Confirm execution includes weekly rebalance logic and IB-aware comparison when available.
 - Confirm missing layers or unresolved conflicts appear in `missing_modules` or `risk_flags`.
-- Confirm the final output is valid JSON when JSON is requested.
+- Confirm both Markdown and JSON were produced unless the user explicitly asked for a single format.
+- Confirm the JSON is valid when JSON is requested.
 
 ## Default Operating Prompt
 
@@ -185,4 +201,4 @@ Before finalizing:
 2. Run `idea-generation-engine` to produce long, short, and event-driven ideas under that regime.
 3. Run `risk-filter-layer` to remove weak names and surface the investable set.
 4. Run `portfolio-execution` to turn the filtered set into weekly-and-IB-aware execution advice.
-5. Return one integrated end-to-end daily portfolio output.
+5. Return a Markdown report plus the matching structured JSON payload.
