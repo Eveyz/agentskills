@@ -15,11 +15,25 @@ Analyze the latest available 13F reporting cycle across major hedge funds and co
 
 Use the three-source policy whenever market, fundamentals, news, or options data is needed:
 
-- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
-- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
-- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+- Use `yfinance-market-data` first for stock prices, price history, volume, options chains, and ticker-linked news.
+- Use `alphavantage-api` second for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` mainly for news, filings, catalyst verification, macro context, and narrative claims.
+- Do not use `tavily_search` as the primary source for stock prices when `yfinance-market-data` or `alphavantage-api` can provide the price directly.
+- Only fall back to `tavily_search` for stock-price context when the price cannot be retrieved from the first two sources.
 
 If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
+
+## Freshness And Cache Policy
+
+- Always fetch the latest available 13F cycle directly at run time.
+- Do not reuse cached fund-change tables or stale quarter labels.
+- Reconfirm both the latest reporting quarter and the prior comparison quarter each run.
+
+## Data Source Priority
+
+- Tier 1: `SEC 13F` filings
+- Tier 2: `WhaleWisdom`, `Dataroma`
+- Use aggregators to speed discovery, but confirm with SEC filings whenever possible.
 
 ## Output Contract
 

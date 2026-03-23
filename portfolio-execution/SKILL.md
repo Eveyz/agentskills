@@ -1,20 +1,23 @@
 ---
 name: portfolio-execution
-description: Convert vetted trade ideas into position sizing, hedge overlays, and rebalance actions by combining portfolio hedging and reporting or implementation steps. Use when Codex needs to turn a filtered idea set into an executable book, weekly rebalance plan, exposure controls, or portfolio instructions.
+description: Convert vetted trade ideas into final account-aware execution advice by combining portfolio hedging, weekly rebalance reporting, and live IB portfolio data. Use when Codex needs to turn a filtered idea set into an executable book, weekly rebalance plan, exposure controls, or current-position-aware portfolio instructions.
 ---
 
 # Portfolio Execution
 
-Run this skill as the final portfolio layer. Take the surviving ideas, size them, define hedge overlays, and produce an execution-ready rebalance plan.
+Run this skill as the final portfolio layer. Take the surviving ideas, the weekly rebalance report, and the current IB portfolio, then produce final execution advice.
 
 ## Supporting Skills
 
 Use these underlying skills when available:
 
 - `portfolio-hedging`
+- `weekly-rebalance-report`
 - `ib-account-reader`
 
-Use `ib-account-reader` only when the user wants live account-aware sizing or exposure checks. Otherwise work from the provided portfolio description and constraints.
+Use `weekly-rebalance-report` before final account-specific execution advice.
+
+Use `ib-account-reader` for the final comparison against live holdings whenever the user wants current-position-aware recommendations. Otherwise work from the provided portfolio description and constraints.
 
 ## Core Outputs
 
@@ -22,19 +25,35 @@ Always aim to produce:
 
 - `position_sizing`
 - `hedge_overlay`
+- `weekly_report_summary`
+- `current_vs_target`
 - `rebalance_plan`
 - `exposure_summary`
+- `final_recommendations`
 
 ## Non-Negotiable Rules
 
 - Do not size positions before the idea list has passed the risk-filter layer.
 - Prefer simple, explainable sizing logic over false precision.
+- Run `weekly-rebalance-report` before finalizing account-level actions.
 - Use live IB account data only in read-only mode.
 - Keep hedge logic tied to the top-down regime and the actual book exposures.
+- If live IB data is available, base the final recommendation on the gap between current holdings and the latest weekly target book.
 
 ## Workflow
 
-### 1. Ingest Portfolio Context
+### 1. Build The Weekly Rebalance View
+
+Invoke `weekly-rebalance-report` first and extract:
+
+- weekly summary
+- rebalance priorities
+- hedge posture
+- monitoring focus
+
+Treat this as the research-to-execution bridge.
+
+### 2. Ingest Portfolio Context
 
 Use one of these inputs:
 
@@ -49,7 +68,7 @@ Normalize:
 - cash buffer
 - max position size
 
-### 2. Size The Positions
+### 3. Size The Positions
 
 Convert approved candidates into target sizes.
 
@@ -62,7 +81,7 @@ Default rules when the user gives no formula:
 
 Express sizing as percentages or dollar notional, depending on user context.
 
-### 3. Design The Hedge Overlay
+### 4. Design The Hedge Overlay
 
 Invoke `portfolio-hedging` using the actual or intended book exposure.
 
@@ -73,9 +92,20 @@ Use the hedge module to define:
 - expected cost or carry burden
 - trigger conditions
 
-The hedge must respond to the regime from the top-down layer, not exist in isolation.
+The hedge must respond to the regime from the top-down layer and the weekly report, not exist in isolation.
 
-### 4. Build The Rebalance Plan
+### 5. Compare Current Versus Target
+
+When live holdings are available from `ib-account-reader`, compare:
+
+- current position
+- target weight
+- gap to close
+- whether the name should be initiated, added, trimmed, held, or exited
+
+If live holdings are not available, state that the plan is target-only rather than account-aware.
+
+### 6. Build The Rebalance Plan
 
 Produce a rebalance or implementation plan that tells the next step clearly:
 
@@ -87,14 +117,26 @@ Produce a rebalance or implementation plan that tells the next step clearly:
 
 When live holdings are available, compare current versus target and focus on deltas rather than restating the whole portfolio.
 
-### 5. Write An Execution Summary
+### 7. Write The Final Recommendation
+
+End with a concise recommendation layer based on the current IB portfolio:
+
+- what to keep
+- what to reduce
+- what to add
+- what hedge adjustment to make now
+
+This is the last-mile advice layer after the weekly report and live-position comparison.
+
+### 8. Write An Execution Summary
 
 Summarize:
 
 - what the portfolio should own
+- what the weekly rebalance report is prioritizing
 - what size each sleeve should be
 - how the book is hedged
-- what should change at the next weekly rebalance checkpoint
+- what should change versus the current IB holdings
 
 ## Preferred Output Shape
 
@@ -116,11 +158,21 @@ Use this shape when the user wants a structured answer:
     "cost": "string",
     "trigger": "string"
   },
+  "weekly_report_summary": "string",
   "exposure_summary": {
     "gross": "string",
     "net": "string",
     "sector_notes": ["string"]
   },
+  "current_vs_target": [
+    {
+      "ticker": "string",
+      "current_weight": "string",
+      "target_weight": "string",
+      "gap": "string",
+      "suggested_action": "initiate|add|trim|hold|exit"
+    }
+  ],
   "rebalance_plan": [
     {
       "action": "initiate|add|trim|hold|exit",
@@ -128,13 +180,17 @@ Use this shape when the user wants a structured answer:
       "reason": "string"
     }
   ],
+  "final_recommendations": [
+    "string"
+  ],
   "missing_modules": ["string"]
 }
 ```
 
 ## Default Operating Prompt
 
-1. Take the approved ideas and the portfolio constraints or live account snapshot.
-2. Size positions based on conviction, catalyst quality, and risk concentration.
-3. Use `portfolio-hedging` to add a hedge overlay that matches the book and the current regime.
-4. Return an execution-ready rebalance plan with weights, hedge, and weekly checkpoint actions.
+1. Run `weekly-rebalance-report` first to summarize the current weekly target book and priorities.
+2. Take the approved ideas plus the portfolio constraints or live account snapshot.
+3. Size positions based on conviction, catalyst quality, and risk concentration.
+4. Use `portfolio-hedging` to add a hedge overlay that matches the book and the current regime.
+5. Compare the target book with current IB holdings and return final account-aware recommendations.

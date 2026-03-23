@@ -1,0 +1,3 @@
+display_name: Weekly Rebalance Report
+short_description: Turn the latest research layers into a weekly portfolio memo and rebalance checklist.
+default_prompt: Use $weekly-rebalance-report to summarize the latest market, idea, risk, and hedge conclusions into a weekly rebalance report.

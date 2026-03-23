@@ -13,11 +13,14 @@ Read live IB account data in a safe, read-only way and prefer the bundled script
 - `conda` must be available.
 - The `finance` conda environment must contain `ib_insync`.
 
-## Required Script
+## Required Scripts
 
-Run [scripts/run_ib_account_query.ps1](scripts/run_ib_account_query.ps1) for all account reads.
+Use these wrappers for all account reads:
 
-The wrapper calls [scripts/ib_account_query.py](scripts/ib_account_query.py) inside `conda run -n finance`, which keeps the environment and JSON output consistent across skills.
+- PowerShell: [scripts/run_ib_account_query.ps1](scripts/run_ib_account_query.ps1)
+- Bash: [scripts/run_ib_account_query.sh](scripts/run_ib_account_query.sh)
+
+Both wrappers call [scripts/ib_account_query.py](scripts/ib_account_query.py) inside `conda run -n finance`, which keeps the environment and JSON output consistent across skills.
 
 ## Default Connection Assumptions
 
@@ -29,7 +32,15 @@ Override these with flags when needed. If the user mentions paper trading, switc
 
 ## Primary Commands
 
-### Full Snapshot
+### Full Snapshot (Bash)
+
+Use this when another skill needs the whole account state:
+
+```bash
+./ib-account-reader/scripts/run_ib_account_query.sh snapshot
+```
+
+### Full Snapshot (PowerShell)
 
 Use this when another skill needs the whole account state:
 
@@ -45,25 +56,37 @@ This returns JSON with:
 - `connection`
 - `generated_at`
 
-### Positions Only
+### Positions Only (Bash)
 
-Use this when only holdings are needed:
+```bash
+./ib-account-reader/scripts/run_ib_account_query.sh positions
+```
+
+### Positions Only (PowerShell)
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\ib-account-reader\scripts\run_ib_account_query.ps1 positions
 ```
 
-### Account Summary Only
+### Account Summary Only (Bash)
 
-Use this when only balances or margin data are needed:
+```bash
+./ib-account-reader/scripts/run_ib_account_query.sh account-summary
+```
+
+### Account Summary Only (PowerShell)
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\ib-account-reader\scripts\run_ib_account_query.ps1 account-summary
 ```
 
-### Open Orders Only
+### Open Orders Only (Bash)
 
-Use this when checking pending activity:
+```bash
+./ib-account-reader/scripts/run_ib_account_query.sh open-orders
+```
+
+### Open Orders Only (PowerShell)
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\ib-account-reader\scripts\run_ib_account_query.ps1 open-orders
@@ -85,7 +108,13 @@ powershell -ExecutionPolicy Bypass -File .\ib-account-reader\scripts\run_ib_acco
 - `--account U1234567`
 - `--pretty`
 
-Example:
+Example (Bash):
+
+```bash
+./ib-account-reader/scripts/run_ib_account_query.sh snapshot --account U1234567 --pretty
+```
+
+Example (PowerShell):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\ib-account-reader\scripts\run_ib_account_query.ps1 snapshot --account U1234567 --pretty

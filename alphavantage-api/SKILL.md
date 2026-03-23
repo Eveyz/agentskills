@@ -370,6 +370,16 @@ def safe_api_call(params: dict) -> dict:
 5. **Use pandas output** - With alpha_vantage package
 6. **Store historical data** - Avoid re-fetching same data
 
+
+## Bash Helper
+
+Use [scripts/run_alphavantage_python.sh](scripts/run_alphavantage_python.sh) when you want a Bash entrypoint that preserves `PYTHONPATH` for the bundled `alphavantage_client.py` module.
+
+Example:
+
+```bash
+./alphavantage-api/scripts/run_alphavantage_python.sh your_script.py
+```
 ## Installation
 
 ```bash

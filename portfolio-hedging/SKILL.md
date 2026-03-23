@@ -15,11 +15,25 @@ Design practical hedging plans for a portfolio and return them as strict JSON.
 
 Use the three-source policy whenever market, fundamentals, news, or options data is needed:
 
-- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
-- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
-- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+- Use `yfinance-market-data` first for stock prices, price history, volume, options chains, and ticker-linked news.
+- Use `alphavantage-api` second for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` mainly for news, filings, catalyst verification, macro context, and narrative claims.
+- Do not use `tavily_search` as the primary source for stock prices when `yfinance-market-data` or `alphavantage-api` can provide the price directly.
+- Only fall back to `tavily_search` for stock-price context when the price cannot be retrieved from the first two sources.
 
 If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
+
+## Freshness And Cache Policy
+
+- Always fetch the latest option-chain, volatility, and exposure data at run time, including the current VIX level when VIX is part of the hedge context.
+- Do not rely on cached option premiums, stale implied volatility, stale VIX levels, or prior hedge costs.
+- Re-check the hedge inputs every time before sizing protection.
+
+## Data Source Priority
+
+- Tier 1: `IBKR` or `CBOE` for options, and `VIX` for volatility context
+- Tier 2: `yfinance-market-data` and `alphavantage-api` only as supporting or fallback market context
+- Prefer exchange or broker option data over commentary or summaries.
 
 ## Output Contract
 

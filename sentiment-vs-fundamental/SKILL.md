@@ -15,11 +15,25 @@ Detect companies where sentiment is materially negative while fundamentals remai
 
 Use the three-source policy whenever market, fundamentals, news, or options data is needed:
 
-- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
-- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
-- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+- Use `yfinance-market-data` first for stock prices, price history, volume, options chains, and ticker-linked news.
+- Use `alphavantage-api` second for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` mainly for news, filings, catalyst verification, macro context, and narrative claims.
+- Do not use `tavily_search` as the primary source for stock prices when `yfinance-market-data` or `alphavantage-api` can provide the price directly.
+- Only fall back to `tavily_search` for stock-price context when the price cannot be retrieved from the first two sources.
 
 If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
+
+## Freshness And Cache Policy
+
+- Always fetch the latest filings, earnings materials, and social or news context at run time.
+- Do not rely on cached sentiment snapshots or stale fundamentals.
+- Re-check both the fundamentals and sentiment sources every time.
+
+## Data Source Priority
+
+- Tier 1 for fundamentals: `10-K`, `10-Q`, earnings releases, and earnings transcripts
+- Tier 2 for sentiment: `Twitter` and `Reddit`
+- Sentiment is a deviation indicator only, not the decision rule by itself.
 
 ## Output Contract
 

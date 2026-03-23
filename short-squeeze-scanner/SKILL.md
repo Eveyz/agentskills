@@ -15,11 +15,26 @@ Detect likely short squeeze setups and convert them into a small, evidence-backe
 
 Use the three-source policy whenever market, fundamentals, news, or options data is needed:
 
-- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
-- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
-- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+- Use `yfinance-market-data` first for stock prices, price history, volume, options chains, and ticker-linked news.
+- Use `alphavantage-api` second for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` mainly for news, filings, catalyst verification, macro context, and narrative claims.
+- Do not use `tavily_search` as the primary source for stock prices when `yfinance-market-data` or `alphavantage-api` can provide the price directly.
+- Only fall back to `tavily_search` for stock-price context when the price cannot be retrieved from the first two sources.
 
 If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
+
+## Freshness And Cache Policy
+
+- Always fetch the latest short-interest, borrow, options, and volume data at run time.
+- Do not use cached short-interest tables or stale borrow figures.
+- Re-check the source every time before scoring squeeze probability.
+
+## Data Source Priority
+
+- Tier 1: exchange data such as `NYSE` or `NASDAQ`
+- Tier 2: `FINRA` short-interest data
+- Tier 3: `Finviz`, `Ortex`
+- Prefer exchange or FINRA data over media summaries.
 
 ## Output Contract
 

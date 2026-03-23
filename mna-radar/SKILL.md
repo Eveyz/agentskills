@@ -15,11 +15,25 @@ Identify likely acquisition targets, connect each target to a plausible buyer, e
 
 Use the three-source policy whenever market, fundamentals, news, or options data is needed:
 
-- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
-- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
-- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+- Use `yfinance-market-data` first for stock prices, price history, volume, options chains, and ticker-linked news.
+- Use `alphavantage-api` second for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` mainly for news, filings, catalyst verification, macro context, and narrative claims.
+- Do not use `tavily_search` as the primary source for stock prices when `yfinance-market-data` or `alphavantage-api` can provide the price directly.
+- Only fall back to `tavily_search` for stock-price context when the price cannot be retrieved from the first two sources.
 
 If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
+
+## Freshness And Cache Policy
+
+- Always fetch the latest filings, company statements, and deal reporting at run time.
+- Do not rely on cached rumor lists or stale deal chatter.
+- Re-check primary filings every time before calling a target credible.
+
+## Data Source Priority
+
+- Tier 1: company announcements, `8-K`, and other `SEC filings`
+- Tier 2: `Reuters`, `Bloomberg`
+- Do not treat rumor-only articles as sufficient evidence.
 
 ## Output Contract
 

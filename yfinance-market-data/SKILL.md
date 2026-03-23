@@ -7,7 +7,7 @@ description: Use yfinance from the `finance` conda environment to fetch stock qu
 
 Use this skill to retrieve market data with `yfinance` from the prebuilt `finance` conda environment.
 
-Prefer the bundled category-specific scripts over ad hoc snippets. Only run the script for the category you actually need.
+Prefer the bundled category-specific scripts over ad hoc snippets. Only run the script for the category you actually need. Use the Bash wrappers on Unix-like shells or call the Python scripts directly from PowerShell.
 
 ## Runtime Assumptions
 
@@ -21,7 +21,7 @@ Use exactly one of these scripts unless the task genuinely needs multiple catego
 
 ### 1. Stock Data
 
-Run [scripts/yf_stock_data.py](scripts/yf_stock_data.py) when you need:
+Run [scripts/yf_stock_data.py](scripts/yf_stock_data.py) or [scripts/run_yf_stock_data.sh](scripts/run_yf_stock_data.sh) when you need:
 
 - latest quote
 - OHLCV history
@@ -38,7 +38,7 @@ Typical use cases:
 
 ### 2. News Data
 
-Run [scripts/yf_news_data.py](scripts/yf_news_data.py) when you need:
+Run [scripts/yf_news_data.py](scripts/yf_news_data.py) or [scripts/run_yf_news_data.sh](scripts/run_yf_news_data.sh) when you need:
 
 - ticker news headlines
 - publisher, publish time, and article link
@@ -52,7 +52,7 @@ Typical use cases:
 
 ### 3. Options Data
 
-Run [scripts/yf_options_data.py](scripts/yf_options_data.py) when you need:
+Run [scripts/yf_options_data.py](scripts/yf_options_data.py) or [scripts/run_yf_options_data.sh](scripts/run_yf_options_data.sh) when you need:
 
 - expiration dates
 - calls and puts for one expiration
@@ -87,7 +87,7 @@ Use Tavily for:
 - catalyst verification
 - cross-checking conflicting facts from structured feeds
 
-If a field is missing from yfinance, do not force it. Fall back to Alpha Vantage or Tavily if appropriate.
+If a price field is needed, try yfinance first, then Alpha Vantage, and only then Tavily as a last resort. If a non-price field is missing from yfinance, do not force it. Fall back to Alpha Vantage or Tavily if appropriate.
 
 ## Command Examples
 
@@ -96,25 +96,25 @@ If a field is missing from yfinance, do not force it. Fall back to Alpha Vantage
 Stock:
 
 ```bash
-conda run -n finance python yfinance-market-data/scripts/yf_stock_data.py --symbol AAPL --period 6mo --include-info
+./yfinance-market-data/scripts/run_yf_stock_data.sh --symbol AAPL --period 6mo --include-info
 ```
 
 News:
 
 ```bash
-conda run -n finance python yfinance-market-data/scripts/yf_news_data.py --symbol NVDA --limit 10
+./yfinance-market-data/scripts/run_yf_news_data.sh --symbol NVDA --limit 10
 ```
 
 Options:
 
 ```bash
-conda run -n finance python yfinance-market-data/scripts/yf_options_data.py --symbol TSLA
+./yfinance-market-data/scripts/run_yf_options_data.sh --symbol TSLA
 ```
 
 Specific expiration:
 
 ```bash
-conda run -n finance python yfinance-market-data/scripts/yf_options_data.py --symbol TSLA --expiration 2026-04-17 --limit 15
+./yfinance-market-data/scripts/run_yf_options_data.sh --symbol TSLA --expiration 2026-04-17 --limit 15
 ```
 
 ### PowerShell
@@ -155,10 +155,10 @@ conda run -n finance python .\yfinance-market-data\scripts\yf_options_data.py --
 
 When a downstream skill needs market data:
 
-1. Try yfinance first for price, volume, options, and ticker-linked news.
-2. Try Alpha Vantage for backup time series, company overview, statements, indicators, and news sentiment.
-3. Use Tavily to verify catalysts, filings, macro context, or any field that is unclear or missing.
-4. If one source is unavailable, continue with the other sources and mark uncertainty instead of guessing.
+1. Try yfinance first for stock prices, price history, volume, options, and ticker-linked news.
+2. Try Alpha Vantage second for backup stock prices, time series, company overview, statements, indicators, and news sentiment.
+3. Use Tavily mainly to verify news, catalysts, filings, macro context, or any field that is unclear or missing.
+4. If a stock price is missing, use Tavily only after yfinance and Alpha Vantage fail. In all cases, continue with the other sources and mark uncertainty instead of guessing.
 
 ## Default Operating Prompt
 

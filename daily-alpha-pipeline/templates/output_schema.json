@@ -1,27 +1,38 @@
 {
-  "macro_regime": "unknown",
-  "top_longs": [
-    {
-      "ticker": "unknown",
-      "reason": "unknown",
-      "entry": "unknown",
-      "confidence": "unknown"
+  "top_down": {
+    "regime": "unknown",
+    "risk_posture": "unknown",
+    "sector_priority": {
+      "overweight": [],
+      "neutral": [],
+      "avoid": []
+    },
+    "playbook": {
+      "prioritize": [],
+      "de_emphasize": [],
+      "invalidate_if": []
     }
-  ],
-  "top_shorts": [
-    {
-      "ticker": "unknown",
-      "reason": "unknown",
-      "entry": "unknown",
-      "confidence": "unknown"
-    }
-  ],
-  "hedge": {
-    "type": "unknown",
-    "target_exposure": "unknown",
-    "rationale": "unknown"
   },
-  "risk_flags": [],
-  "weekly_focus": "unknown",
+  "idea_generation": {
+    "long_ideas": [],
+    "short_ideas": [],
+    "event_driven_trades": [],
+    "debate_summary": []
+  },
+  "risk_filter": {
+    "approved_candidates": [],
+    "rejected_candidates": [],
+    "risk_flags": []
+  },
+  "execution": {
+    "weekly_report_summary": "unknown",
+    "position_sizing": [],
+    "hedge_overlay": {},
+    "current_vs_target": [],
+    "rebalance_plan": [],
+    "final_recommendations": []
+  },
+  "confidence": "unknown",
+  "missing_modules": [],
   "sources": []
 }

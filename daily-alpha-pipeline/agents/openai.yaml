@@ -1,4 +1,4 @@
 interface:
   display_name: "Daily Alpha Pipeline"
-  short_description: "Orchestrate macro, event, and hedging signals into a daily long-short book."
-  default_prompt: "Use $daily-alpha-pipeline to run the full hedge fund workflow and return the final portfolio report as strict JSON."
+  short_description: "Run the four upper-layer engines end to end into a daily portfolio output."
+  default_prompt: "Use $daily-alpha-pipeline to run the complete end-to-end workflow through top-down, idea, risk, and execution layers and return the final portfolio output as strict JSON."

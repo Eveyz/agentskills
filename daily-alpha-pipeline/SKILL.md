@@ -1,234 +1,169 @@
 ---
 name: daily-alpha-pipeline
-description: Orchestrate a daily hedge-fund portfolio workflow that runs macro regime analysis first, dynamically reweights downstream signals by regime, combines insider buying, short squeeze, M&A, sentiment, correlation, dividend, hedge-fund positioning, and hedging modules, cross-validates ideas on the same ticker, filters trades that conflict with the macro backdrop, and returns a strict portfolio report. Use when Codex needs to build a daily long-short book, daily alpha report, hedge overlay, or master investment pipeline from multiple sub-skills.
+description: Orchestrate the full end-to-end portfolio workflow by combining the four upper-layer engines: top-down-alpha-engine, idea-generation-engine, risk-filter-layer, and portfolio-execution. Use when Codex should run the complete daily process from macro regime to idea generation to risk filtering to weekly-and-IB-aware execution advice in one pass.
 ---
 
 # Daily Alpha Pipeline
 
-Run this skill as the master orchestrator for a hedge fund portfolio manager workflow. Start top-down, merge bottom-up signals, remove ideas that do not survive regime and risk checks, then return one strict JSON object matching [templates/output_schema.json](templates/output_schema.json).
+Run this skill as the master end-to-end orchestrator. It should not bypass the upper-layer engines unless one is unavailable. The job of this skill is to sequence the four layers, pass context from one layer to the next, and return one integrated daily portfolio output.
 
 Return only valid JSON when the user asks for the pipeline output itself.
 
 ## Required Inputs
 
-Accept the user's universe, region, date, liquidity floor, and risk constraints when provided. If omitted, assume:
+Accept the user's universe, region, date, liquidity floor, portfolio constraints, and account-awareness preference when provided. If omitted, assume:
 
 - US-listed liquid equities
-- Holding period of several days to several weeks
-- Exactly 3 long ideas and 2 short ideas
-- Modest net exposure with an explicit hedge overlay
+- holding period of several days to several weeks
+- exactly 3 long ideas and 2 short ideas unless the user specifies otherwise
+- modest net exposure with an explicit hedge overlay
+- live IB comparison is desired when `ib-account-reader` is available
 
 ## Supporting Skills
 
-Prefer these sub-skills when available:
+Prefer these upper-layer skills and run them in this order:
 
-- `macro_top_down_analysis`
-- `insider_buying_detector`
-- `short_squeeze_scanner`
-- `mna_radar`
-- `sentiment_vs_fundamental`
-- `correlation_anomaly`
-- `dividend_risk`
-- `hedge_fund_positioning`
-- `portfolio_hedging`
+- `top-down-alpha-engine`
+- `idea-generation-engine`
+- `risk-filter-layer`
+- `portfolio-execution`
 
-If a sub-skill is unavailable, do not invent its findings. Continue with the available evidence, record the missing module in `risk_flags`, and reduce confidence.
+`portfolio-execution` is expected to use:
+
+- `portfolio-hedging`
+- `weekly-rebalance-report`
+- `ib-account-reader`
+
+If an upper-layer skill is unavailable, do not silently drop the layer. Record the missing module, continue with the remaining layers where possible, and reduce confidence.
+
+## Freshness And Source Aggregation Policy
+
+- Always rerun the four upper-layer engines against the latest available data at run time.
+- Do not reuse cached JSON outputs, stale daily notes, or old weekly summaries as the current source of truth.
+- Re-check the current source stack every run.
+- Preserve each layer's Tier 1 and Tier 2 source discipline rather than replacing it with generic summaries.
 
 ## Non-Negotiable Rules
 
-- Run `macro_top_down_analysis` before any portfolio selection.
-- Use the macro regime as a hard gating layer for trade selection and sizing logic.
-- Run all four primary signal generators when available: insider, squeeze, M&A, and sentiment.
-- Prefer names confirmed by multiple independent signals on the same ticker.
-- Remove trades that directly conflict with the macro regime unless a hard idiosyncratic catalyst clearly dominates.
-- In risk-off regimes, penalize speculative longs and weak balance sheets.
-- In risk-on regimes, allow higher-beta ideas but still screen for crowding, squeeze reversal risk, and catalyst quality.
-- Keep the final book to exactly 3 longs and 2 shorts unless the user explicitly requests a different shape.
+- Run the layers strictly in sequence: top-down, idea generation, risk filter, execution.
+- Do not let idea generation override the top-down regime; use the regime as the context for downstream decisions.
+- Do not let execution bypass the risk-filter layer.
+- Prefer names confirmed by multiple underlying signals and still approved by the filter layer.
+- Base the final recommendation on the latest weekly rebalance view and, when available, the current IB portfolio.
 - Use `"unknown"` instead of fabricating facts.
 
 ## Workflow
 
-### 1. Run Macro Analysis
+### 1. Run The Top-Down Layer
 
-Invoke `macro_top_down_analysis` first and extract:
+Invoke `top-down-alpha-engine` first and extract:
 
-- Macro regime label
-- Risk-on, balanced, risk-off, or event-driven mixed posture
-- Growth, liquidity, and policy direction
-- High-level sector and factor implications
+- `regime`
+- `risk_posture`
+- `sector_priority`
+- `top_down_playbook`
 
-Translate the macro output into one of these working stances:
+Treat this as the portfolio context for the rest of the run.
 
-- `risk_on`
-- `balanced`
-- `risk_off`
-- `event_driven_mixed`
+### 2. Run The Idea Layer
 
-Set `macro_regime` to the regime label from the macro module, or `"unknown"` if it cannot be verified.
+Invoke `idea-generation-engine` using the latest top-down context.
 
-### 2. Apply Regime-Based Weights
+Extract:
 
-Use the working stance to dynamically weight downstream evidence before ranking ideas.
+- `long_ideas`
+- `short_ideas`
+- `event_driven_trades`
+- `debate_summary`
+- `cross_signal_alignment`
 
-Weighting rules:
+Use the top-down regime to prefer ideas that fit the environment.
 
-- `risk_on`: overweight `sentiment_vs_fundamental` and `short_squeeze_scanner`
-- `risk_off`: overweight `dividend_risk` and `portfolio_hedging`
-- `balanced`: keep signal families closer to equal weight
-- `event_driven_mixed`: emphasize idiosyncratic event signals and reduce broad factor exposure
+### 3. Run The Risk Filter Layer
 
-Use these weights to break ties, prioritize research effort, and explain confidence. Do not let weighting override hard disqualifiers such as severe macro conflict, unmanageable crowding, or obvious event risk.
+Invoke `risk-filter-layer` on the idea layer output.
 
-### 3. Run Signal-Generating Skills
+Extract:
 
-Run these primary idea generators when available:
-
-- `insider_buying_detector`
-- `short_squeeze_scanner`
-- `mna_radar`
-- `sentiment_vs_fundamental`
-
-Use these secondary validators and risk modules where helpful:
-
-- `correlation_anomaly`
-- `dividend_risk`
-- `hedge_fund_positioning`
-
-Use `portfolio_hedging` during portfolio construction rather than as a primary alpha source.
-
-For each surfaced ticker, maintain a working record with:
-
-- `ticker`
-- `direction`
-- `signal_types`
-- `reason`
-- `entry`
-- `confidence`
-- `macro_fit`
-- `risk_notes`
-
-Direction defaults:
-
-- Insider buying usually starts as `long`
-- Short squeeze setups usually support a `long` or invalidate a `short`
-- M&A target or strategic optionality usually starts as `long`
-- Sentiment detached from weakening fundamentals usually starts as `short`
-- Dividend risk usually supports a `short` or blocks a `long`
-
-### 4. Cross-Validate Signals
-
-Check whether multiple signals align on the same ticker.
-
-Upgrade conviction when a ticker is supported by at least 2 independent dimensions such as:
-
-- Event flow
-- Positioning or crowding
-- Sentiment versus fundamentals
-- Macro alignment
-- Correlation anomaly or relative-value dislocation
-
-Conviction rubric:
-
-- `high`: 3 or more aligned dimensions with no major contradiction
-- `medium`: 2 aligned dimensions with manageable risks
-- `low`: 1 signal only, conflicting evidence, or missing validation
-
-Prefer names with multi-signal alignment when building the final book.
-
-### 5. Apply Risk Filtering
-
-Remove or downgrade ideas that conflict with the macro regime.
-
-Examples:
-
-- In `risk_off`, reject speculative squeeze-only longs unless there is an additional hard catalyst.
-- In `risk_off`, prefer resilient cash flow, defensives, or event-backed longs.
-- In `risk_on`, allow cyclical or sentiment-driven longs, but reject crowded shorts exposed to squeeze risk.
-- In `event_driven_mixed`, favor idiosyncratic M&A, insider, and dislocation setups over broad beta trades.
-
-Always filter for:
-
-- Severe macro conflict
-- Excess crowding
-- Near-term dividend or financing risk
-- Takeover risk that can blow up a short
-- Hedge mismatch at the portfolio level
-
-Record every unresolved issue in `risk_flags`.
-
-### 6. Construct Portfolio
-
-Build:
-
-- `top_longs`: exactly 3 ideas
-- `top_shorts`: exactly 2 ideas
-- `hedge`: one overlay that offsets the dominant book risk
-
-Rank candidates by:
-
-1. Cross-validation quality
-2. Macro fit
-3. Catalyst clarity
-4. Risk-reward asymmetry
-5. Liquidity and implementability
-
-Each selected idea must contain:
-
-- `ticker`
-- `reason`
-- `entry`
-- `confidence`
-
-Use concise but specific rationale. `entry` can be a setup description such as `"accumulate on pullbacks while catalyst remains intact"` when precise price data is unavailable.
-
-### 7. Output Final Report
-
-Return strict JSON matching [templates/output_schema.json](templates/output_schema.json).
-
-Required fields:
-
-- `macro_regime`
-- `top_longs`
-- `top_shorts`
-- `hedge`
+- `approved_candidates`
+- `rejected_candidates`
+- `smart_money_follow_list`
 - `risk_flags`
-- `weekly_focus`
-- `sources`
 
-`weekly_focus` should summarize the one portfolio theme or monitoring priority that matters most over the next week.
+This is the investable gate. Only approved or watch-level names should reach execution.
 
-`sources` should include the supporting URLs, source titles when known, and sub-skill outputs or source references used to justify the report. If exact metadata is unavailable, include the URL or module name and use `"unknown"` for missing fields.
+### 4. Run The Execution Layer
 
-## Output Contract
+Invoke `portfolio-execution` using:
 
-Use this shape exactly:
+- the approved candidate set
+- the top-down regime context
+- the latest hedge posture
+- live IB holdings when available
+
+Extract:
+
+- `position_sizing`
+- `hedge_overlay`
+- `weekly_report_summary`
+- `current_vs_target`
+- `rebalance_plan`
+- `final_recommendations`
+
+### 5. Produce The Daily End-To-End Output
+
+Return one integrated portfolio object that preserves the four-layer structure while remaining concise enough to act on.
+
+The final output should make it obvious:
+
+- what the regime is
+- what the best long, short, and event-driven ideas are
+- what survived risk filtering
+- what the target book is
+- how the hedge is structured
+- what the current IB portfolio should change today
+
+## Preferred Output Shape
+
+Use this shape when the user wants a structured answer:
 
 ```json
 {
-  "macro_regime": "unknown",
-  "top_longs": [
-    {
-      "ticker": "unknown",
-      "reason": "unknown",
-      "entry": "unknown",
-      "confidence": "low|medium|high|unknown"
+  "top_down": {
+    "regime": "string",
+    "risk_posture": "string",
+    "sector_priority": {
+      "overweight": ["string"],
+      "neutral": ["string"],
+      "avoid": ["string"]
+    },
+    "playbook": {
+      "prioritize": ["string"],
+      "de_emphasize": ["string"],
+      "invalidate_if": ["string"]
     }
-  ],
-  "top_shorts": [
-    {
-      "ticker": "unknown",
-      "reason": "unknown",
-      "entry": "unknown",
-      "confidence": "low|medium|high|unknown"
-    }
-  ],
-  "hedge": {
-    "type": "unknown",
-    "target_exposure": "unknown",
-    "rationale": "unknown"
   },
-  "risk_flags": [],
-  "weekly_focus": "unknown",
+  "idea_generation": {
+    "long_ideas": [],
+    "short_ideas": [],
+    "event_driven_trades": [],
+    "debate_summary": []
+  },
+  "risk_filter": {
+    "approved_candidates": [],
+    "rejected_candidates": [],
+    "risk_flags": []
+  },
+  "execution": {
+    "weekly_report_summary": "string",
+    "position_sizing": [],
+    "hedge_overlay": {},
+    "current_vs_target": [],
+    "rebalance_plan": [],
+    "final_recommendations": []
+  },
+  "confidence": "low|medium|high|unknown",
+  "missing_modules": ["string"],
   "sources": []
 }
 ```
@@ -237,21 +172,17 @@ Use this shape exactly:
 
 Before finalizing:
 
-- Confirm `macro_top_down_analysis` ran first or was explicitly unavailable
-- Confirm the regime-weighting logic influenced prioritization
-- Confirm all four primary signal generators were attempted when available
-- Confirm the final book has exactly 3 longs and 2 shorts unless the user changed it
-- Confirm every selected name survived cross-validation and risk filtering
-- Confirm the hedge offsets the portfolio's dominant beta, sector, or factor risk
-- Confirm missing modules and unresolved contradictions appear in `risk_flags`
-- Confirm the final answer is valid JSON with no markdown wrapper when output is requested
+- Confirm all four upper-layer engines were attempted in order.
+- Confirm the idea layer used the top-down layer as context.
+- Confirm the risk filter gated what reached execution.
+- Confirm execution includes weekly rebalance logic and IB-aware comparison when available.
+- Confirm missing layers or unresolved conflicts appear in `missing_modules` or `risk_flags`.
+- Confirm the final output is valid JSON when JSON is requested.
 
 ## Default Operating Prompt
 
-1. Run `macro_top_down_analysis` and classify the regime.
-2. Dynamically reweight downstream evidence based on the regime.
-3. Run insider, squeeze, M&A, and sentiment modules.
-4. Cross-validate overlapping signals on the same ticker.
-5. Remove trades that conflict with the macro regime or fail risk checks.
-6. Build exactly 3 long ideas, 2 short ideas, and one hedge overlay.
-7. Return strict JSON only.
+1. Run `top-down-alpha-engine` to classify the market regime and sector priorities.
+2. Run `idea-generation-engine` to produce long, short, and event-driven ideas under that regime.
+3. Run `risk-filter-layer` to remove weak names and surface the investable set.
+4. Run `portfolio-execution` to turn the filtered set into weekly-and-IB-aware execution advice.
+5. Return one integrated end-to-end daily portfolio output.
