@@ -1,0 +1,3 @@
+display_name: Idea Generation Engine
+short_description: Debate and rank long, short, and event-driven ideas from multiple alpha modules.
+default_prompt: Use $idea-generation-engine to combine the event and sentiment skills, run a bull-versus-bear debate, and return the best trade ideas.

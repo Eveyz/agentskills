@@ -1,0 +1,3 @@
+display_name: Risk Filter Layer
+short_description: Remove weak ideas and highlight candidates supported by smart-money positioning.
+default_prompt: Use $risk-filter-layer to filter a candidate list through dividend-risk and hedge-fund-positioning before portfolio construction.

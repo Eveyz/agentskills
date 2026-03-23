@@ -1,0 +1,3 @@
+display_name: Portfolio Execution
+short_description: Turn filtered ideas into sizing, hedge overlays, and rebalance actions.
+default_prompt: Use $portfolio-execution to convert approved trade ideas into target sizing, hedge overlays, and a weekly rebalance plan.

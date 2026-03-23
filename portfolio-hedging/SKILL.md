@@ -9,10 +9,17 @@ Design practical hedging plans for a portfolio and return them as strict JSON.
 
 ## Required Tools
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
-- `yahoo_finance_api`
 
-If either tool is unavailable, say so briefly and stop rather than guessing.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Output Contract
 
@@ -124,3 +131,4 @@ Make triggers observable and public. Avoid vague language like `"if sentiment wo
 4. Estimate the cost using current public information, clearly labeling assumptions.
 5. Add a concrete trigger for when each hedge should be used.
 6. Return strict JSON only.
+

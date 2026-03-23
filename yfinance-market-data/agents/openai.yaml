@@ -1,0 +1,3 @@
+display_name: YFinance Market Data
+short_description: Fetch stock, news, and options data with category-specific yfinance scripts.
+default_prompt: Use $yfinance-market-data to fetch stock, news, or options data from yfinance using the category-specific script.

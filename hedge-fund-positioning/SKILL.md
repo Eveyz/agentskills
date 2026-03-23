@@ -9,9 +9,17 @@ Analyze the latest available 13F reporting cycle across major hedge funds and co
 
 ## Required Tools
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
 
-If `tavily_search` is unavailable, say so briefly and stop rather than fabricating holdings data.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Output Contract
 
@@ -163,3 +171,4 @@ Before finalizing:
 3. Extract each fund's notable new positions, increased positions, and exited positions.
 4. Aggregate the reported moves into sector trends and crowded trades.
 5. Return strict JSON only.
+

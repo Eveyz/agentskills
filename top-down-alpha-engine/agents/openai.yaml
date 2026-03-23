@@ -1,0 +1,3 @@
+display_name: Top-Down Alpha Engine
+short_description: Turn macro and cross-asset signals into regime, risk posture, and sector priorities.
+default_prompt: Use $top-down-alpha-engine to combine macro analysis and correlation mapping into a top-down market playbook.

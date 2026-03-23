@@ -9,10 +9,17 @@ Detect companies where sentiment is materially negative while fundamentals remai
 
 ## Required Tools
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
-- `yahoo_finance_api`
 
-If either tool is unavailable, say so briefly and stop rather than fabricating data.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Output Contract
 
@@ -57,7 +64,7 @@ Prefer fresh sources. If social-media tone is not directly verifiable, keep the 
 
 ### 2. Retrieve And Normalize Fundamentals
 
-Use `yahoo_finance_api` to collect or derive:
+Use `yfinance-market-data` to collect or derive:
 
 - Revenue growth
 - Profitability or margin quality
@@ -95,7 +102,7 @@ Reject candidates where:
 
 ### 4. Define Entry Signals
 
-Use price context from `yahoo_finance_api` plus chart-aware reasoning to define an entry setup.
+Use price context from `yfinance-market-data` plus chart-aware reasoning to define an entry setup.
 
 Acceptable entry signals include:
 
@@ -121,7 +128,7 @@ Keep each field concise and evidence-based.
 
 - Use at least 2 sources per reported idea when possible
 - Include both sentiment evidence and fundamental evidence
-- Prefer reputable financial press, company materials surfaced in search, and finance data from `yahoo_finance_api`
+- Prefer reputable financial press, company materials surfaced in search, and finance data from `yfinance-market-data`
 - Include URLs in the top-level `sources` array
 - Exclude stale sources unless they provide necessary valuation or business context
 
@@ -155,7 +162,8 @@ Before finalizing:
 ## Default Operating Prompt
 
 1. Search for stocks with recent negative news and, when available, bearish public social-media tone using `tavily_search`.
-2. Pull revenue growth, margins, and valuation context with `yahoo_finance_api`.
+2. Pull revenue growth, margins, and valuation context with `yfinance-market-data`.
 3. Identify cases where sentiment is meaningfully worse than the underlying fundamentals.
 4. Define a simple technical or mean-reversion entry signal for each valid idea.
 5. Return strict JSON only.
+

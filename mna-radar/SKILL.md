@@ -9,9 +9,17 @@ Identify likely acquisition targets, connect each target to a plausible buyer, e
 
 ## Required Tools
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
 
-If `tavily_search` is unavailable, say so briefly and stop rather than fabricating catalyst evidence.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Output Contract
 
@@ -139,3 +147,4 @@ Before finalizing:
 2. Identify the strongest likely targets based on undervaluation, strategic assets, and takeover evidence.
 3. Assign the most plausible buyer for each target, estimate a realistic premium from sector deal history, and assess regulatory risk.
 4. Return strict JSON only.
+

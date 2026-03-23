@@ -9,9 +9,17 @@ Detect unusual cross-asset correlation patterns, compare them with normal histor
 
 ## Required Tools
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
 
-If `tavily_search` is unavailable, say so briefly and stop rather than fabricating evidence.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Output Contract
 
@@ -192,3 +200,4 @@ Before finalizing:
 3. Interpret each confirmed anomaly using evidence-based labels such as `liquidity_stress` or `regime_shift`.
 4. Generate cautious `mean_reversion` and `normalization_trade` ideas tied to the detected anomaly.
 5. Return strict JSON only, using `"unknown"` for unverifiable fields.
+

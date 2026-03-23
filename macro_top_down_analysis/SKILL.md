@@ -30,9 +30,17 @@ Do not use this skill for:
 
 ## Required Tooling
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
 
-If `tavily_search` is unavailable, say so briefly and stop rather than inventing facts.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Non-Negotiable Rules
 
@@ -264,4 +272,5 @@ Use this prompt structure when executing the skill:
 5. Map the regime to likely performance for growth/value equities, bonds, commodities, and USD.
 6. Generate actionable sector overweights and avoids.
 7. Return strict JSON only. Use `"unknown"` for any unverifiable field.
+
 

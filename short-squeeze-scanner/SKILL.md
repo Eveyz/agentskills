@@ -9,10 +9,17 @@ Detect likely short squeeze setups and convert them into a small, evidence-backe
 
 ## Required Tools
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
-- `yahoo_finance_api`
 
-If either tool is unavailable, say so briefly and stop rather than fabricating market data.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Output Contract
 
@@ -75,7 +82,7 @@ Do not treat social-media excitement alone as a sufficient catalyst unless it is
 
 ### 4. Evaluate Squeeze Probability
 
-Use `yahoo_finance_api` plus search evidence to assess:
+Use `yfinance-market-data` plus search evidence to assess:
 
 - `liquidity`: avoid names so illiquid that the setup is not realistically tradable
 - `volume spike`: compare current or recent volume versus normal volume; `1.5x+` average volume is supportive and `2x+` is strong
@@ -140,7 +147,8 @@ Before finalizing:
 
 1. Search for current high-short-interest stocks with elevated borrow rates and recent catalysts.
 2. Verify short interest, days to cover, borrow rate, and catalyst for each candidate.
-3. Use `yahoo_finance_api` to assess liquidity and recent volume behavior, and use search evidence to evaluate options activity when available.
+3. Use `yfinance-market-data` to assess liquidity and recent volume behavior, and use search evidence to evaluate options activity when available.
 4. Filter to names with short interest above `20%` and elevated borrow cost.
 5. Define a practical entry zone, trigger condition, and failure risk for the best candidates.
 6. Return strict JSON only.
+

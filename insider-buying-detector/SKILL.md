@@ -9,10 +9,17 @@ Detect recent, significant insider buying and turn it into a structured event-dr
 
 ## Required Tools
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
-- `yahoo_finance_api`
 
-If either tool is unavailable, say so briefly and stop rather than fabricating data.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Output Contract
 
@@ -67,7 +74,7 @@ If several insiders bought within the window, capture the strongest role in `ins
 
 ### 3. Fetch Current Price And Compute Performance
 
-Use `yahoo_finance_api` to fetch the latest regular-market price for each qualifying ticker.
+Use `yfinance-market-data` to fetch the latest regular-market price for each qualifying ticker.
 
 Compute return since purchase as:
 
@@ -154,7 +161,8 @@ Before finalizing:
 
 1. Search recent insider buying activity using OpenInsider-style coverage, SEC Form 4 filings, and recent financial news.
 2. Filter to open-market insider purchases above `$100,000` from the last 30 days.
-3. For each stock, identify the insider role, normalize buy price and amount, fetch the current price with `yahoo_finance_api`, and compute return since purchase.
+3. For each stock, identify the insider role, normalize buy price and amount, fetch the current price with `yfinance-market-data`, and compute return since purchase.
 4. Evaluate cluster buying, insider seniority, and timing versus earnings or other catalysts.
 5. Infer a cautious public-information hypothesis for the buying.
 6. Return strict JSON only.
+

@@ -9,10 +9,17 @@ Detect likely dividend traps among high-yield stocks and return a strict JSON ri
 
 ## Required Tools
 
+- `yfinance-market-data`
+- `alphavantage-api`
 - `tavily_search`
-- `yahoo_finance_api`
 
-If either tool is unavailable, say so briefly and stop rather than inferring unsupported facts.
+Use the three-source policy whenever market, fundamentals, news, or options data is needed:
+
+- Start with `yfinance-market-data` for price history, volume, options chains, and ticker-linked news.
+- Query `alphavantage-api` for backup quotes, time series, company overview, statements, indicators, earnings calendars, and news sentiment.
+- Use `tavily_search` to verify filings, catalysts, macro context, and narrative claims.
+
+If one source is unavailable or incomplete, continue with the remaining sources and mark uncertainty instead of stopping.
 
 ## Output Contract
 
@@ -30,7 +37,7 @@ If a company is reviewed but does not clear the yield threshold, exclude it from
 
 ### 1. Build A Candidate Set
 
-Use `yahoo_finance_api` first to confirm:
+Use `yfinance-market-data` first to confirm:
 
 - ticker
 - current dividend yield
@@ -132,3 +139,4 @@ Before finalizing:
 3. Flag names with elevated dividend cut risk.
 4. Suggest a safer peer for each risky stock.
 5. Return strict JSON only.
+
