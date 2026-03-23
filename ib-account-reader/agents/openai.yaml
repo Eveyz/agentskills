@@ -1,0 +1,4 @@
+interface:
+  display_name: "IB Account Reader"
+  short_description: "Read live IB account balances, holdings, and open orders as JSON."
+  default_prompt: "Use $ib-account-reader to read my live Interactive Brokers account and return the account snapshot as strict JSON."
