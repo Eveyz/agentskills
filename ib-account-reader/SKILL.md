@@ -1,6 +1,6 @@
 ---
 name: ib-account-reader
-description: Read live Interactive Brokers account data through a local IB Gateway or TWS session using ib_insync and a preconfigured conda environment. Use when Codex needs current portfolio holdings, account summary values, net liquidation, cash balances, open orders, or a machine-readable account snapshot from the user's IB account without placing trades.
+description: Read live Interactive Brokers account data through a local IB Gateway or TWS session using `ib_insync` from the uv-managed hedgefund virtualenv by default, with `conda` as a fallback. Use when Codex needs current portfolio holdings, account summary values, net liquidation, cash balances, open orders, or a machine-readable account snapshot from the user's IB account without placing trades.
 ---
 
 # IB Account Reader
@@ -10,8 +10,11 @@ Read live IB account data in a safe, read-only way and prefer the bundled script
 ## Required Runtime
 
 - Local IB Gateway or TWS must already be running and accepting API connections.
-- `conda` must be available.
-- The `finance` conda environment must contain `ib_insync`.
+- Preferred runtime: `/home/znz/project/hedgefund/.venv`
+- The wrappers first respect an already-activated virtualenv via `$VIRTUAL_ENV`, then try `/home/znz/project/hedgefund/.venv`, then `uv run --project /home/znz/project/hedgefund`, and finally fall back to `conda run -n finance`.
+- Set `UV_PROJECT_ROOT` if the hedgefund project lives somewhere else.
+- Set `CONDA_ENV_NAME` if the fallback conda environment is not named `finance`.
+- `ib_insync` must be installed in the selected runtime.
 
 ## Required Scripts
 
@@ -20,7 +23,7 @@ Use these wrappers for all account reads:
 - PowerShell: [scripts/run_ib_account_query.ps1](scripts/run_ib_account_query.ps1)
 - Bash: [scripts/run_ib_account_query.sh](scripts/run_ib_account_query.sh)
 
-Both wrappers call [scripts/ib_account_query.py](scripts/ib_account_query.py) inside `conda run -n finance`, which keeps the environment and JSON output consistent across skills.
+Both wrappers call [scripts/ib_account_query.py](scripts/ib_account_query.py) through the same runtime-selection logic so the environment and JSON output stay consistent across skills.
 
 ## Default Connection Assumptions
 
@@ -128,7 +131,7 @@ powershell -ExecutionPolicy Bypass -File .\ib-account-reader\scripts\run_ib_acco
 
 ## Failure Handling
 
-- If `conda` is unavailable, stop and say the runtime is missing.
-- If `ib_insync` is missing in `finance`, stop and say the environment needs that package.
+- If neither the uv-managed runtime nor the conda fallback is available, stop and say the runtime is missing.
+- If `ib_insync` is missing in the selected runtime, stop and say the environment needs that package.
 - If IB rejects the connection, stop and report the connection parameters used.
 - If the payload is empty, do not guess; return the empty result and say no data was returned.

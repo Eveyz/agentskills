@@ -9,6 +9,8 @@ Run this skill as the master end-to-end orchestrator. It should not bypass the u
 
 By default, return both a readable Markdown report and a machine-readable JSON payload. Return JSON only when the user explicitly asks for JSON only.
 
+For every run, also save the human-readable Markdown result to `~/daily-alpha-pipeline/YY-MM-DD-HH-MM-SS.md`. Create the `~/daily-alpha-pipeline` directory if it does not already exist. Use a human-readable timestamp in local run time formatted exactly as `yy-mm-dd-hh-mm-ss`.
+
 ## Required Inputs
 
 Accept the user's universe, region, date, liquidity floor, portfolio constraints, and account-awareness preference when provided. If omitted, assume:
@@ -138,6 +140,8 @@ The Markdown report should include these sections:
 
 Keep the Markdown concise and decision-oriented.
 
+After composing the Markdown report, save the same report to `~/daily-alpha-pipeline/YY-MM-DD-HH-MM-SS.md` for historical review. When both Markdown and JSON are requested, include the JSON payload in the saved `.md` file under the `## JSON Payload` section as well.
+
 ## JSON Output Shape
 
 Use this shape when the user wants a structured answer:
@@ -201,4 +205,5 @@ Before finalizing:
 2. Run `idea-generation-engine` to produce long, short, and event-driven ideas under that regime.
 3. Run `risk-filter-layer` to remove weak names and surface the investable set.
 4. Run `portfolio-execution` to turn the filtered set into weekly-and-IB-aware execution advice.
-5. Return a Markdown report plus the matching structured JSON payload.
+5. Save the Markdown result to `~/daily-alpha-pipeline/YY-MM-DD-HH-MM-SS.md`.
+6. Return a Markdown report plus the matching structured JSON payload.

@@ -1,5 +1,7 @@
 # Daily Alpha Report
 
+Save this report to `~/daily-alpha-pipeline/YY-MM-DD-HH-MM-SS.md` after generation, creating the directory if needed.
+
 ## Daily Summary
 
 - Regime: ...

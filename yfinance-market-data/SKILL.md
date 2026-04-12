@@ -1,18 +1,21 @@
 ---
 name: yfinance-market-data
-description: Use yfinance from the `finance` conda environment to fetch stock quotes, price history, company info, fundamentals, news, and options chains. Use when Codex needs market data from yfinance and should choose a category-specific script for stock, news, or options data instead of loading everything.
+description: Use yfinance from the uv-managed hedgefund virtualenv by default, with `conda` as a fallback, to fetch stock quotes, price history, company info, fundamentals, news, and options chains. Use when Codex needs market data from yfinance and should choose a category-specific script for stock, news, or options data instead of loading everything.
 ---
 
 # YFinance Market Data
 
-Use this skill to retrieve market data with `yfinance` from the prebuilt `finance` conda environment.
+Use this skill to retrieve market data with `yfinance` from the uv-managed hedgefund virtualenv by default, falling back to the `finance` conda environment when needed.
 
-Prefer the bundled category-specific scripts over ad hoc snippets. Only run the script for the category you actually need. Use the Bash wrappers on Unix-like shells or call the Python scripts directly from PowerShell.
+Prefer the bundled category-specific scripts over ad hoc snippets. Only run the script for the category you actually need. Use the wrappers or the uv-managed Python directly so runtime selection stays consistent.
 
 ## Runtime Assumptions
 
-- `conda` is installed.
-- The `finance` conda environment already contains `yfinance`.
+- Preferred runtime: `/home/znz/project/hedgefund/.venv`
+- The Bash wrappers first respect an already-activated virtualenv via `$VIRTUAL_ENV`, then try `/home/znz/project/hedgefund/.venv`, then `uv run --project /home/znz/project/hedgefund`, and finally fall back to `conda run -n finance`.
+- Set `UV_PROJECT_ROOT` if the hedgefund project lives somewhere else.
+- Set `CONDA_ENV_NAME` if the fallback conda environment is not named `finance`.
+- `yfinance` must be installed in the selected runtime.
 - Network access is available when the script is run.
 
 ## Category Scripts
@@ -117,30 +120,38 @@ Specific expiration:
 ./yfinance-market-data/scripts/run_yf_options_data.sh --symbol TSLA --expiration 2026-04-17 --limit 15
 ```
 
+Manual activation of the uv-managed environment:
+
+```bash
+cd /home/znz/project/hedgefund
+source .venv/bin/activate
+python /Users/zniverse/Documents/projects/agentskills/yfinance-market-data/scripts/yf_stock_data.py --symbol AAPL --period 6mo --include-info
+```
+
 ### PowerShell
 
 Stock:
 
 ```powershell
-conda run -n finance python .\yfinance-market-data\scripts\yf_stock_data.py --symbol AAPL --period 6mo --include-info
+uv run --project /home/znz/project/hedgefund python .\yfinance-market-data\scripts\yf_stock_data.py --symbol AAPL --period 6mo --include-info
 ```
 
 News:
 
 ```powershell
-conda run -n finance python .\yfinance-market-data\scripts\yf_news_data.py --symbol NVDA --limit 10
+uv run --project /home/znz/project/hedgefund python .\yfinance-market-data\scripts\yf_news_data.py --symbol NVDA --limit 10
 ```
 
 Options:
 
 ```powershell
-conda run -n finance python .\yfinance-market-data\scripts\yf_options_data.py --symbol TSLA
+uv run --project /home/znz/project/hedgefund python .\yfinance-market-data\scripts\yf_options_data.py --symbol TSLA
 ```
 
 Specific expiration:
 
 ```powershell
-conda run -n finance python .\yfinance-market-data\scripts\yf_options_data.py --symbol TSLA --expiration 2026-04-17 --limit 15
+uv run --project /home/znz/project/hedgefund python .\yfinance-market-data\scripts\yf_options_data.py --symbol TSLA --expiration 2026-04-17 --limit 15
 ```
 
 ## Execution Rules
@@ -163,6 +174,6 @@ When a downstream skill needs market data:
 ## Default Operating Prompt
 
 1. Decide whether the task needs stock, news, or options data.
-2. Run only the matching yfinance script from the `finance` conda environment.
+2. Run only the matching yfinance script through the wrapper so it uses the uv-managed hedgefund virtualenv first and falls back to `conda` only if needed.
 3. Return the parsed JSON or summarize the fields relevant to the requesting skill.
 4. If yfinance is missing a needed field, fall back to Alpha Vantage or Tavily instead of fabricating it.
