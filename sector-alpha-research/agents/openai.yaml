@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sector Alpha Research"
+  short_description: "Research sector alpha and top-20 watchlists"
+  default_prompt: "Use $sector-alpha-research to analyze a sector, explain where the alpha is, and review the top 20 stocks that deserve attention right now."

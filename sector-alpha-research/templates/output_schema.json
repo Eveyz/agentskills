@@ -1,0 +1,67 @@
+{
+  "sector": "string",
+  "region": "string",
+  "time_horizon": "string",
+  "top_down": {
+    "regime": "string",
+    "risk_posture": "risk_on|balanced|risk_off|event_driven_mixed|unknown",
+    "sector_fit": "favored|mixed|unfavored|unknown",
+    "playbook": {
+      "prioritize": [
+        "string"
+      ],
+      "avoid": [
+        "string"
+      ],
+      "invalidate_if": [
+        "string"
+      ]
+    }
+  },
+  "sector_alpha_map": {
+    "tailwinds": [
+      "string"
+    ],
+    "headwinds": [
+      "string"
+    ],
+    "alpha_vectors": [
+      "string"
+    ],
+    "subsector_focus": [
+      "string"
+    ]
+  },
+  "top_20_screen": [
+    {
+      "ticker": "string",
+      "company_name": "string",
+      "status": "priority_now|watch|deprioritize",
+      "why_now": "string",
+      "key_signal": "string",
+      "key_risk": "string"
+    }
+  ],
+  "priority_names": [
+    {
+      "ticker": "string",
+      "stance": "long|short|event_driven|watch",
+      "thesis": "string",
+      "catalyst": "string",
+      "supporting_modules": [
+        "string"
+      ],
+      "risk_notes": [
+        "string"
+      ]
+    }
+  ],
+  "monitoring_triggers": [
+    "string"
+  ],
+  "confidence": "low|medium|high|unknown",
+  "missing_modules": [
+    "string"
+  ],
+  "sources": []
+}
